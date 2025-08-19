@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-model = load_model("mnist_cnn.keras")
+model = load_model("mnist_cnn_with_aug.keras")
 
 root = Tk()
 root.withdraw() 
@@ -105,7 +105,7 @@ for contour in filtered_contours:
     #if w*h < 200: continue
     area = cv2.contourArea(contour)
     if (area < 100): continue
-    print("Area: ", area)
+    #print("Area: ", area)
     
     without_rectangle = img_rectangled[y-10:y+h+10,x-10:x+w+10].copy()
     for_model.append(without_rectangle)
@@ -189,12 +189,12 @@ for digit_img in for_model:
     #print(canvas)
 
     # デバッグ用: 最終的な入力画像を表示
-    
+    """
     plt.figure(figsize=(3, 3))
     plt.imshow(canvas, cmap='gray')
     plt.title(f"Input to model - Digit")
     plt.show()
-    
+    """
     
     #resized_img    = cv2.resize(grayscaled_img, (28,28))
     normalized_img = canvas.astype("float32") / 255.0
