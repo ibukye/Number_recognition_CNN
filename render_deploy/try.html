@@ -10,11 +10,12 @@
     </head>
 
     <body>
-        <h2>Draw a Number (0-9)</h2>
+        <h2>Draw a Number</h2>
+        <p>you can draw multiple digits</p>
         <canvas id="canvas" width="280" height="280"></canvas><br>
         <button onclick="sendImage()">Recognize</button>
         <button onclick="clearCanvas()">Clear</button>
-        
+        <div id="loading"></div>
         <div id="result" style="margin-top: 20px; font-size: 18px;"></div>
     </body>
 
@@ -99,6 +100,7 @@
 
         function sendImage() {
             const dataURL = canvas.toDataURL("image/png");
+            document.getElementById("loading").innerHTML = "Processing Image";
             
             fetch("/predict", {
                 method: "POST",

@@ -8,13 +8,6 @@ from fastapi.responses import HTMLResponse
 import cv2
 from MDP_function_revised import MDP
 
-
-import os
-
-port = int(os.environ.get("PORT", 10000))
-uvicorn.run("webapp:app", host="0.0.0.0", port=port)
-
-
 # TensorFlowモデルのテスト読み込み
 try:
     from tensorflow.keras.models import load_model
