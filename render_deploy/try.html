@@ -100,8 +100,9 @@
 
         function sendImage() {
             const dataURL = canvas.toDataURL("image/png");
-            document.getElementById("loading").innerHTML = "Processing Image";
-            
+            const loading_message = document.getElementById("loading");
+            loading_message.innerHTML = "Processing Image...";
+
             fetch("/predict", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -109,10 +110,13 @@
             })
             .then(res => res.json())
             .then(data => {
+                loading_message.innerHTML = "";
                 document.getElementById("result").innerHTML = 
                     `<strong>Predicted: ${data.result}</strong>`;
             })
+
             .catch(error => {
+                loading_message.innerHTML = "";
                 document.getElementById("result").innerHTML = `<span style="color: red;">Error: ${error}</span>`;
             });
         }
