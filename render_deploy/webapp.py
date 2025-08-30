@@ -6,7 +6,7 @@ from PIL import Image
 import numpy as np
 from fastapi.responses import HTMLResponse
 import cv2
-from render_deploy.MDP_function_revised import MDP
+from MDP_function_revised import MDP
 
 # TensorFlowモデルのテスト読み込み
 try:
