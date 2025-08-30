@@ -31,7 +31,7 @@ def MDP(img_array):
     for contour in filtered_contours:
         x, y, w, h = cv2.boundingRect(contour)
         area = cv2.contourArea(contour)
-        print(area) # 6の中の〇をはじくため
+        #print(area) # 6の中の〇をはじくため
         """
         平均をとってその60分の1だった場合ははじく
         この60はもっと小さくてもいいけど一旦
@@ -61,7 +61,7 @@ def MDP(img_array):
 
         pred = model.predict(input_img)
         pred_class = np.argmax(pred)
-        print(f"predicted digit: {pred_class}")
+        #print(f"predicted digit: {pred_class}")
         digits.append(str(pred_class))
 
     number = 0

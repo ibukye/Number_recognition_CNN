@@ -6,7 +6,7 @@ from PIL import Image
 import numpy as np
 from fastapi.responses import HTMLResponse
 import cv2
-from MDP_function_revised import MDP
+from render_deploy.MDP_function_revised import MDP
 
 # TensorFlowモデルのテスト読み込み
 try:
@@ -49,8 +49,8 @@ def predict(data: ImageData):
         #print("After inversion - img_array mean:", np.mean(img_array))
         
         # 画像保存（テスト用）
-        cv2.imwrite("processed_image.png", img_array)
-        print("Image saved successfully")
+        #cv2.imwrite("processed_image.png", img_array)
+        #print("Image saved successfully")
         
         # モデルが読み込まれているかテスト
         if not MODEL_LOADED:
