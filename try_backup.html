@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>canvas tutorial</title>
+    </head>
+
+    <body>
+        <canvas id="canvas" width="280" height="280" style="border:1px solid black;"></canvas>
+        <button onclick="sendImage()">Recognition</button>
+        <button onclick="clearCanvas()">Clear</button>
+    </body>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext('2d');
+        let drawing = false;
+
+        canvas.addEventListener("mousedown", () => drawing = true);
+        canvas.addEventListener("mouseup", () => drawing = false);
+        canvas.addEventListener("mousemove", draw);
+
+        function draw(e) {
+            if (!drawing) return;
+            context.lineWidth = 20;
+            context.lineCap = 'round';
+            context.strokeStyle = 'black';
+            
+            context.lineTo(e.offsetX, e.offsetY);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(e.offsetX, e.offsetY);
+        }
+
+        function clearCanvas() {
+            context.fillStyle = "white";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function sendImage() {
+            // image -> img_data (Base64 string)
+            const dataURL = canvas.toDataURL("image/png");
+            fetch("/predict", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({image: dataURL})
+            })
+            .then(res => res.json())
+            .then(data => alert("predicted: " + data.result));
+        }
+    </script>
+</html>

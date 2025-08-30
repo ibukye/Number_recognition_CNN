@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Number Recognition</title>
+        <style>
+            body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+            canvas { border: 2px solid #333; background-color: white; cursor: crosshair; }
+            button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+        </style>
+    </head>
+
+    <body>
+        <h2>Draw a Number (0-9)</h2>
+        <canvas id="canvas" width="280" height="280"></canvas><br>
+        <button onclick="sendImage()">Recognize</button>
+        <button onclick="clearCanvas()">Clear</button>
+        
+        <div id="result" style="margin-top: 20px; font-size: 18px;"></div>
+    </body>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext('2d');
+        let drawing = false;
+
+        // 初期化
+        clearCanvas();
+
+        // マウスイベント
+        canvas.addEventListener("mousedown", function(e) {
+            drawing = true;
+            drawPoint(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener("mouseup", function() {
+            drawing = false;
+        });
+
+        canvas.addEventListener("mousemove", function(e) {
+            if (drawing) {
+                drawPoint(e.offsetX, e.offsetY);
+            }
+        });
+
+        canvas.addEventListener("mouseout", function() {
+            drawing = false;
+        });
+
+        function drawPoint(x, y) {
+            context.fillStyle = "black";
+            context.beginPath();
+            context.arc(x, y, 8, 0, Math.PI * 2);
+            //context.stroke();
+            context.fill();
+        }
+
+        function clearCanvas() {
+            context.fillStyle = "white";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            document.getElementById("result").innerHTML = "";
+        }
+
+        function sendImage() {
+            const dataURL = canvas.toDataURL("image/png");
+            
+            fetch("/predict", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({image: dataURL})
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = 
+                    `<strong>Predicted: ${data.result}</strong>`;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<span style="color: red;">Error: ${error}</span>`;
+            });
+        }
+    </script>
+</html>

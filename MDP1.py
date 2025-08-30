@@ -84,7 +84,7 @@ for_model = []
 for contour in filtered_contours:
     x, y, w, h = cv2.boundingRect(contour)
     area = cv2.contourArea(contour)
-    if (area < 300 and w < 15 and h < 20): 
+    if (area < 100 and w < 15 and h < 20): 
         continue
 
     # 元画像から数字部分を切り出し
