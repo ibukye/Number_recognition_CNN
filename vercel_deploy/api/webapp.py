@@ -1,5 +1,6 @@
 # FastAPI
 from fastapi import FastAPI
+from vercel_fastapi import VercelFastAPI
 from pydantic import BaseModel
 import base64, io
 from PIL import Image
@@ -20,6 +21,7 @@ except Exception as e:
     MODEL_LOADED = False
 
 app = FastAPI()
+handler = VercelFastAPI(app)
 
 class ImageData(BaseModel):
     image: str
