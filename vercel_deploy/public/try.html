@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Number Recognition</title>
+        <style>
+            body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+            canvas { border: 2px solid #333; background-color: white; cursor: crosshair; }
+            button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+        </style>
+    </head>
+
+    <body>
+        <h2>Draw a Number</h2>
+        <p>you can draw multiple digits</p>
+        <canvas id="canvas" width="280" height="280"></canvas><br>
+        <button onclick="sendImage()">Recognize</button>
+        <button onclick="clearCanvas()">Clear</button>
+        <div id="loading"></div>
+        <div id="result" style="margin-top: 20px; font-size: 18px;"></div>
+    </body>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext('2d');
+        let drawing = false;
+        let prevX = 0, prevY = 0;
+
+        // 初期化
+        clearCanvas();
+
+        // マウスイベント
+        canvas.addEventListener("mousedown", function(e) {
+            drawing = true;
+            prevX = e.offsetX;
+            prevY = e.offsetY;
+        });
+
+        canvas.addEventListener("mouseup", function() {
+            drawing = false;
+        });
+
+        canvas.addEventListener("mousemove", function(e) {
+            if (drawing) {
+                const currX = e.offsetX;
+                const currY = e.offsetY;
+                drawLine(prevX, prevY, currX, currY);
+                prevX = currX;
+                prevY = currY;
+            }
+        });
+
+
+        canvas.addEventListener("mouseout", function() {
+            drawing = false;
+        });
+
+
+        canvas.addEventListener("touchstart", function(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            drawing = true;
+            prevX = touch.offsetX || touch.clientX - canvas.getBoundingClientRect().left;
+            prevY = touch.offsetY || touch.clientY - canvas.getBoundingClientRect().top;
+        });
+
+        canvas.addEventListener("touchmove", function(e) {
+            e.preventDefault();
+            if (drawing) {
+                const touch = e.touches[0];
+                const currX = touch.offsetX || touch.clientX - canvas.getBoundingClientRect().left;
+                const currY = touch.offsetY || touch.clientY - canvas.getBoundingClientRect().top;
+                drawLine(prevX, prevY, currX, currY);
+                prevX = currX;
+                prevY = currY;
+            }
+        });
+
+        canvas.addEventListener("touchend", function() {
+            drawing = false;
+        });
+
+
+        
+        function drawLine(x1, y1, x2, y2) {
+            context.strokeStyle = "black";
+            context.lineWidth = 16; // 太さ調整（元の円の直径に近い）
+            context.lineCap = "round"; // 丸みのある線端
+            context.beginPath();
+            context.moveTo(x1, y1);
+            context.lineTo(x2, y2);
+            context.stroke();
+        }
+
+
+        function clearCanvas() {
+            context.fillStyle = "white";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            document.getElementById("result").innerHTML = "";
+        }
+
+        function sendImage() {
+            const dataURL = canvas.toDataURL("image/png");
+            const loading_message = document.getElementById("loading");
+            loading_message.innerHTML = "Processing Image...";
+
+            fetch("/predict", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({image: dataURL})
+            })
+            .then(res => res.json())
+            .then(data => {
+                loading_message.innerHTML = "";
+                document.getElementById("result").innerHTML = 
+                    `<strong>Predicted: ${data.result}</strong>`;
+            })
+
+            .catch(error => {
+                loading_message.innerHTML = "";
+                document.getElementById("result").innerHTML = `<span style="color: red;">Error: ${error}</span>`;
+            });
+        }
+    </script>
+</html>
