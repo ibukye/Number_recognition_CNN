@@ -42,6 +42,7 @@ for_model = []
 for contour in filtered_contours:
     x,y,w,h = cv2.boundingRect(contour)   
     area = cv2.contourArea(contour)
+    print(area)
     if (area < 100): continue
    
     without_rectangle = img_rectangled[y-10:y+h+10,x-10:x+w+10].copy()

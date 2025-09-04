@@ -1,6 +1,6 @@
 # FastAPI
 from fastapi import FastAPI
-from vercel_fastapi import VercelFastAPI
+#from vercel_fastapi import VercelFastAPI
 from pydantic import BaseModel
 import base64, io
 from PIL import Image
@@ -21,16 +21,30 @@ except Exception as e:
     MODEL_LOADED = False
 
 app = FastAPI()
-handler = VercelFastAPI(app)
 
 class ImageData(BaseModel):
     image: str
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+# 静的ファイルを /public にマウント
+app.mount("/public", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "..", "public")), name="public")
+
+# ルートで index.html を返す
+@app.get("/", response_class=FileResponse)
+async def root():
+    html_path = os.path.join(os.path.dirname(__file__), "..", "public", "index.html")
+    return FileResponse(html_path, media_type="text/html")
+
+
+"""
 @app.get("/")
 def index():
-    with open("try.html", "r", encoding="utf-8") as f:
+    with open("../public/index.html", "r", encoding="utf-8") as f:
         html_content = f.read()
     return HTMLResponse(content=html_content, status_code=200)
+"""
 
 @app.post("/predict")
 def predict(data: ImageData):
@@ -69,3 +83,6 @@ def predict(data: ImageData):
         import traceback
         traceback.print_exc()
         return {"error": f"Prediction failed: {str(e)}"}
+    
+# Vercel用のハンドラー（この部分が重要）
+handler = app

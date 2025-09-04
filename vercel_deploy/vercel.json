@@ -5,8 +5,14 @@
       "maxDuration": 60
     }
   },
-  "routes": [
-    { "src": "/predict", "dest": "api/index.py" },
-    { "src": "/", "dest": "public/try.html" }
+  "rewrites": [
+    {
+      "source": "/predict",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/",
+      "destination": "/api/index"
+    }
   ]
 }
