@@ -1,8 +1,37 @@
 from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
+import requests
+import tempfile
+import os
 
 model = load_model("mnist_cnn_with_aug.keras")
+
+MODEL_URL = "https://github.com/ibukye/Number_recognition_CNN/releases/download/v1.0.0/mnist_cnn_with_aug.keras"
+
+def load_mnist_model():
+    try:
+        print("Downlooading model from GitHub in MDP function...")
+        response = requests.get(MODEL_URL, stream=True)
+        response.raise_for_status()
+
+        # tmp file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.keras') as temp_file:
+            for chunk in response.iter_content(chunk_size=8192):
+                temp_file.write(chunk)
+            temp_model_path = temp_file.name
+
+        model = load_model(temp_model_path)
+
+        # delete tmp file
+        os.unlink(temp_model_path)
+        print("MNIST model loaded in MDP function")
+    except Exception as e:
+        print(f"Error loading model in MDP: {e}")
+        model = None
+    return model
+
+
 
 def MDP(img_array):
     """

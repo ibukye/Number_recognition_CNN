@@ -7,12 +7,15 @@ from PIL import Image
 import numpy as np
 from fastapi.responses import HTMLResponse
 import cv2
-from MDP_function_revised import MDP
+from .MDP_function_revised import MDP
+import requests
+import os
+
 
 # TensorFlowモデルのテスト読み込み
 try:
     from tensorflow.keras.models import load_model
-    model = load_model("mnist_cnn_with_aug.keras")
+    model = load_model("../mnist_cnn_with_aug.keras")
     print("Model loaded successfully!")
     MODEL_LOADED = True
 except Exception as e:

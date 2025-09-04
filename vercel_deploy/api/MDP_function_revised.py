@@ -2,7 +2,7 @@ from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
 
-model = load_model("mnist_cnn_with_aug.keras")
+model = load_model("../mnist_cnn_with_aug.keras")
 
 def MDP(img_array):
     """
