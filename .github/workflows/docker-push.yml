@@ -18,11 +18,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: docker build -t number-recognition-cnn:latest .
-
-      - name: Tag image
-        run: docker tag number-recognition-cnn:latest nenneko1729/number-recognition-cnn:latest
-
-      - name: Push image
-        run: docker push nenneko1729/number-recognition-cnn:latest
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: nenneko1729/number-recognition-cnn:latest
